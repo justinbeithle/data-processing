@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="css/nav.css">
     <link rel="stylesheet" href="css/forms.css">
     <style>
-        #widgets {
+
+         #widgets {
             max-width:600px;
             margin:5px;
             padding:2px;
@@ -32,6 +33,11 @@
             top:10px;
             max-width:75px;
         }
+
+        p{
+            text-align: center;
+            font-weight: bold;
+        }
         </style>
 </head>
 
@@ -47,6 +53,10 @@
     </header>
 
     <main class="wrapper">
+
+        <p id="description"> 
+        This page demonstrates data processing of query string data using client side JavaScript. <br>
+        Upon submission, the cart items are totaled and title case is applied to the Shipping Info.</p>
 
         <h2 class="subheader">Widget Mart</h2>
         <div id="output">
@@ -133,59 +143,81 @@
 
     <script src="js/main.js"></script>
     <script>
+          function titleCase(str) {
+            str = str.toLowerCase().split(' ');
+            for (var i = 0; i < str.length; i++) {
+            str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1); 
+            }
+            return str.join(' ');
+        }
+
         const queryString = window.location.search;
+
         const urlParams = new URLSearchParams(queryString);
 
-        if (queryString.length > 0) { //data submitted 
-            let myOutput = `<div id="container"`;
+        if (queryString.length > 0) {//data submitted 
+            let myOutput = "";
+
+            let myShipping = "";
             let myCart = "";
             let myTotal = 0;
-            let myShipping = "";
-
-            urlParams.forEach(function (value, key){
-               
-               if(key =="Cart"){ //cart
+    
+            urlParams.forEach(function(value,key){
+                 //console.log(value);
+              
+             if(key =="Cart"){ //cart
                 //alert(value);
-                switch(value){
-                    case"Widget":
-                        myCart += `Widget: $3.99<br>`;
-                        myTotal += 3.99;
-                    break;
-                
-                switch(value){
-                case"Sprocket":
-                    myCart += `Sprocket: $5.99<br>`;
-                    myTotal += 5.99;
-                break;
-
-                switch(value){
-                    case "Thingy":
-                        myCart += `Thingy: $1.99<br>`;
-                        myTotal += 1.99;
-                    break;
-                
-                
-                }
-            }
-                }else{
-
-                
-        }
-
-                key = key.split("_").join(" ");
-                myShipping += `<p>${key}: ${value}</p>`;
+                     switch(value){
+                        case "Widget":
+                            myCart  += `Widget: $3.99<br>`;
+                            myTotal += 3.99;
+                        break;
+                    
+                        case "Sprocket":
+                            myCart += `Sprocket: $5.99<br>`;
+                            myTotal += 5.99;
+                        break;
+                        
+                        case "Thingy":
+                            myCart += `Thingy: $1.99<br>`;
+                            myTotal += 1.99;
+                        break;
+                    } //end of card items
             
-        });
+                }else{ //this is how we process shipping
+                
+                    key = key.split("_").join(" "); //
+                    switch(key){
+                        case "First Name":
+                        case "Last Name":
+                        case "Address":
+                        case "City":
+                        value = titleCase(value);
+                        break;
+                    }//end of card transaction
+                }
+
+                myShipping += `<p>${key}: ${value}</p>`; //looping through data
+
+            });
+   
+              
+
 
             myCart = `<h3>Cart Totals</h3>
-            <p>${myCart}</p>;
+            <p>${myCart}</p>
             <p>Total: $${myTotal}</p>`;
 
-            myOutput +=  myCart + `<h3>Shipping Total</h3>`,myShipping 
-            myOutput += `<p><a href="data_processing_index.html">CLEAR</a></p>`;
+            myOutput += myCart + myShipping;
+
+
+            myOutput += `<p><a href="index.html">CLEAR</a></p>`;
             myOutput += `</div>`;
+
             document.querySelector("#output").innerHTML = myOutput;
+
         }
+
     </script>
 </body>
 
